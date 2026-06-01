@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ravi Shankar Kr Choudhary | PremierWhiz Labs</title>
+    
+    <!-- Core Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        theme: {
+                            400: 'var(--theme-400)',
+                            500: 'var(--theme-500)',
+                            600: 'var(--theme-600)',
+                        },
+                        surface: {
+                            light: '#f8fafc',
+                            dark: '#0a0f1c',
+                            cardLight: 'rgba(255, 255, 255, 0.7)',
+                            cardDark: 'rgba(15, 23, 42, 0.6)'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS Variables and Styling -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        /* Color Themes based on User Screenshot */
+        :root {
+            /* Default: Cyan/Teal */
+            --theme-400: #2dd4bf; --theme-500: #14b8a6; --theme-600: #0d9488;
+        }
+        .theme-purple { --theme-400: #c084fc; --theme-500: #a855f7; --theme-600: #9333ea; }
+        .theme-green { --theme-400: #34d399; --theme-500: #10b981; --theme-600: #059669; }
+        .theme-pink { --theme-400: #fb7185; --theme-500: #f43f5e; --theme-600: #e11d48; }
+
+        body { font-family: 'Inter', sans-serif; overflow-x: hidden; }
+
+        /* Multi-Page SPA Routing Classes */
+        .page-section { display: none; animation: fadeIn 0.5s ease-out forwards; padding-top: 120px; padding-bottom: 100px; min-height: 100vh; }
+        .page-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 3D Canvas Background */
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none; }
+        
+        /* Typography & Utilities */
+        .text-gradient {
+            background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, var(--theme-400), var(--theme-600));
+        }
+        .glass-card {
+            background: var(--surface-cardDark);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 1.5rem;
+        }
+        .light .glass-card {
+            background: var(--surface-cardLight);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            color: #000; /* Ensure text is black in light mode */
+        }
+        
+        .light p, .light span:not(.text-white):not([class*="text-theme"]):not([class*="bg-"]), .light h1, .light h2, .light h3, .light h4 {
+            color: #111827; /* Enforce dark text in light mode */
+        }
+
+        /* Progress Bars */
+        .skill-bar-fill { height: 100%; background-color: var(--theme-500); border-radius: 9999px; transition: width 1.5s ease-out; }
+
+        /* Theme Switcher UI matches provided image */
+        .theme-dot { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; transition: transform 0.2s; border: 2px solid transparent; }
+        .theme-dot:hover { transform: scale(1.1); }
+        .theme-dot.active { border-color: white; transform: scale(1.1); box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-gray-900 dark:text-white selection:bg-theme-500 selection:text-white transition-colors duration-300">
+
+    <canvas id="bg-canvas"></canvas>
+
+    <nav class="fixed top-0 w-full z-50 glass-card !rounded-none !border-t-0 !border-l-0 !border-r-0 py-4 px-6">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            
+            <!-- Logo -->
+            <a href="#" onclick="navigate('home')" class="flex flex-col group">
+                <span class="text-xl md:text-2xl font-display font-bold flex items-center gap-2 text-black dark:text-white">
+                    <i data-lucide="cpu" class="w-6 h-6 text-theme-500"></i>
+                    PremierWhiz <span class="text-theme-500">Labs</span>
+                </span>
+                <span class="text-[10px] text-gray-600 dark:text-gray-500 tracking-widest uppercase ml-8">by Ravi Shankar</span>
+            </a>
+
+            <!-- Desktop Links -->
+            <div class="hidden lg:flex items-center gap-6 text-sm font-medium">
+                <button onclick="navigate('home')" class="nav-link text-theme-500 font-bold hover:text-theme-400 transition-colors">Home</button>
+                <button onclick="navigate('about')" class="nav-link text-black dark:text-gray-400 hover:text-theme-500 dark:hover:text-white transition-colors">About</button>
+                <button onclick="navigate('projects')" class="nav-link text-black dark:text-gray-400 hover:text-theme-500 dark:hover:text-white transition-colors">Projects</button>
+                <button onclick="navigate('research')" class="nav-link text-black dark:text-gray-400 hover:text-theme-500 dark:hover:text-white transition-colors">Research</button>
+                <button onclick="navigate('resume')" class="nav-link text-black dark:text-gray-400 hover:text-theme-500 dark:hover:text-white transition-colors">Resume</button>
+                <button onclick="navigate('certificates')" class="nav-link text-black dark:text-gray-400 hover:text-theme-500 dark:hover:text-white transition-colors">Certificates</button>
+            </div>
+
+            <!-- Exact Theme Switcher from Screenshot -->
+            <div class="flex items-center gap-4">
+                <div class="hidden md:flex items-center gap-3 border-r border-gray-300 dark:border-gray-700 pr-4">
+                    <div class="theme-dot bg-[#14b8a6] active" onclick="setTheme('theme-cyan', this)"></div>
+                    <div class="theme-dot bg-[#a855f7]" onclick="setTheme('theme-purple', this)"></div>
+                    <div class="theme-dot bg-[#10b981]" onclick="setTheme('theme-green', this)"></div>
+                    <div class="theme-dot bg-[#f43f5e]" onclick="setTheme('theme-pink', this)"></div>
+                </div>
+                
+                <button onclick="toggleDarkMode()" class="text-gray-800 dark:text-gray-400 hover:text-theme-500 transition-colors" title="Toggle Light/Dark Mode">
+                    <i data-lucide="moon" id="moon-icon" class="w-6 h-6 hidden dark:block"></i>
+                    <i data-lucide="sun" id="sun-icon" class="w-6 h-6 block dark:hidden"></i>
+                </button>
+
+                <!-- Mobile Menu Toggle -->
+                <button class="lg:hidden text-gray-500 dark:text-gray-400" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden absolute top-full left-0 w-full glass-card border-t border-gray-200 dark:border-gray-800 flex flex-col p-4 gap-4 lg:hidden">
+            <button onclick="navigate('home')" class="text-left text-gray-700 dark:text-gray-300 font-medium">Home</button>
+            <button onclick="navigate('about')" class="text-left text-gray-700 dark:text-gray-300 font-medium">About</button>
+            <button onclick="navigate('projects')" class="text-left text-gray-700 dark:text-gray-300 font-medium">Projects</button>
+            <button onclick="navigate('resume')" class="text-left text-gray-700 dark:text-gray-300 font-medium">Resume</button>
+            <div class="flex gap-2 mt-2">
+                <div class="theme-dot bg-[#14b8a6]" onclick="setTheme('theme-cyan', this)"></div>
+                <div class="theme-dot bg-[#a855f7]" onclick="setTheme('theme-purple', this)"></div>
+                <div class="theme-dot bg-[#10b981]" onclick="setTheme('theme-green', this)"></div>
+                <div class="theme-dot bg-[#f43f5e]" onclick="setTheme('theme-pink', this)"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 relative z-10">
+
+        <!-- 1. HOME SECTION -->
+        <section id="home" class="page-section active">
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-12">
+                
+                <!-- Text Content -->
+                <div class="lg:w-1/2 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/30 text-green-600 dark:text-green-400 text-sm font-medium mb-6">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Open to Internships
+                    </div>
+                    
+                    <h1 class="text-5xl md:text-7xl font-display font-extrabold tracking-tight leading-tight mb-4 text-black dark:text-white">
+                        Ravi Shankar <br>
+                        <span class="text-gradient">Kr Choudhary</span>
+                    </h1>
+                    
+                    <div class="flex flex-wrap justify-center lg:justify-start gap-3 mb-6">
+                        <span class="px-3 py-1 bg-gray-100 dark:bg-surface-dark border border-gray-300 dark:border-gray-700 rounded-lg text-sm font-mono text-gray-700 dark:text-gray-300">AI Researcher</span>
+                        <span class="px-3 py-1 bg-gray-100 dark:bg-surface-dark border border-gray-300 dark:border-gray-700 rounded-lg text-sm font-mono text-gray-700 dark:text-gray-300">Computer Vision Dev</span>
+                        <span class="px-3 py-1 bg-gray-100 dark:bg-surface-dark border border-theme-500/50 rounded-lg text-sm font-mono text-theme-600 dark:text-theme-400">Open Source Builder</span>
+                    </div>
+                    
+                    <p class="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-xl mx-auto lg:mx-0">
+                        B.Sc. Computer Science & AI student (CGPA: 7.5). Bridging Medical Diagnostics and Generative AI at <strong>PremierWhiz Labs</strong>. 
+                    </p>
+                    
+                    <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 mb-8">
+                        <button onclick="navigate('contact')" class="px-8 py-4 rounded-full bg-theme-500 text-white font-bold hover:bg-theme-600 transition-all shadow-lg hover:scale-105">
+                            Hire Me
+                        </button>
+                        <button onclick="navigate('resume')" class="px-8 py-4 rounded-full glass-card text-gray-900 dark:text-white font-bold hover:bg-gray-100 dark:hover:bg-white/10 transition-all flex items-center gap-2">
+                            <i data-lucide="file-text" class="w-5 h-5"></i> View Resume
+                        </button>
+                    </div>
+
+                    <!-- Social Links -->
+                    <div class="flex items-center justify-center lg:justify-start gap-6">
+                        <a href="https://github.com/Premierwhiz" target="_blank" class="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors flex items-center gap-2">
+                            <i data-lucide="github" class="w-5 h-5"></i> GitHub
+                        </a>
+                        <a href="#" class="text-gray-500 dark:text-gray-400 hover:text-blue-500 transition-colors flex items-center gap-2">
+                            <i data-lucide="linkedin" class="w-5 h-5"></i> LinkedIn
+                        </a>
+                        <a href="mailto:rravi582004@gmail.com" class="text-gray-500 dark:text-gray-400 hover:text-theme-500 transition-colors flex items-center gap-2">
+                            <i data-lucide="mail" class="w-5 h-5"></i> Email
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Professional Avatar & Dashboards -->
+                <div class="lg:w-1/2 flex flex-col gap-6">
+                    <div class="flex justify-center">
+                        <div class="relative group w-64 h-64 md:w-80 md:h-80">
+                            <!-- Glow -->
+                            <div class="absolute inset-0 rounded-full bg-theme-500/20 blur-3xl"></div>
+                            <div class="absolute inset-2 rounded-full border border-dashed border-theme-500/50 animate-[spin_20s_linear_infinite]"></div>
+                            
+                            <!-- Real GitHub Avatar -->
+                            <div class="absolute inset-6 rounded-full overflow-hidden border-4 border-white dark:border-surface-dark bg-white dark:bg-surface-dark shadow-2xl">
+                                <img src="https://github.com/Premierwhiz.png" alt="Ravi Shankar" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live GitHub Stats Integration -->
+                    <div class="glass-card rounded-2xl overflow-hidden p-4 flex flex-col items-center justify-center bg-white/50 dark:bg-transparent border border-gray-200 dark:border-gray-700/50">
+                        <h4 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4 w-full text-left">Live GitHub Stats</h4>
+                        <img src="https://github-readme-stats.vercel.app/api?username=Premierwhiz&show_icons=true&theme=transparent&hide_border=true&title_color=14b8a6&text_color=71717a&icon_color=14b8a6&bg_color=00000000" alt="GitHub Stats" class="w-full max-w-sm hidden dark:block" onerror="this.src='https://placehold.co/400x200/0a0f1c/14b8a6?text=GitHub+API+Rate+Limit'">
+                        <img src="https://github-readme-stats.vercel.app/api?username=Premierwhiz&show_icons=true&theme=transparent&hide_border=true&title_color=0d9488&text_color=3f3f46&icon_color=0d9488&bg_color=00000000" alt="GitHub Stats" class="w-full max-w-sm block dark:hidden" onerror="this.src='https://placehold.co/400x200/f8fafc/0d9488?text=GitHub+API+Rate+Limit'">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Navigation Tiles -->
+            <div class="mt-24 grid grid-cols-2 md:grid-cols-4 gap-4">
+                <button onclick="navigate('projects')" class="glass-card p-6 text-center hover:-translate-y-2 transition-transform">
+                    <i data-lucide="folder-git-2" class="w-8 h-8 mx-auto text-theme-500 mb-3"></i>
+                    <h4 class="font-bold text-gray-900 dark:text-white">4+ Projects</h4>
+                    <p class="text-xs text-gray-500 mt-1">View Case Studies</p>
+                </button>
+                <button onclick="navigate('research')" class="glass-card p-6 text-center hover:-translate-y-2 transition-transform">
+                    <i data-lucide="microscope" class="w-8 h-8 mx-auto text-purple-500 mb-3"></i>
+                    <h4 class="font-bold text-gray-900 dark:text-white">Medical AI</h4>
+                    <p class="text-xs text-gray-500 mt-1">Research Lab</p>
+                </button>
+                <button onclick="navigate('certificates')" class="glass-card p-6 text-center hover:-translate-y-2 transition-transform">
+                    <i data-lucide="award" class="w-8 h-8 mx-auto text-yellow-500 mb-3"></i>
+                    <h4 class="font-bold text-gray-900 dark:text-white">8 Certifications</h4>
+                    <p class="text-xs text-gray-500 mt-1">Verified Gallery</p>
+                </button>
+                <button onclick="navigate('resume')" class="glass-card p-6 text-center hover:-translate-y-2 transition-transform">
+                    <i data-lucide="briefcase" class="w-8 h-8 mx-auto text-blue-500 mb-3"></i>
+                    <h4 class="font-bold text-gray-900 dark:text-white">1 Internship</h4>
+                    <p class="text-xs text-gray-500 mt-1">ProVistaHub</p>
+                </button>
+            </div>
+        </section>
+
+        <!-- 2. ABOUT SECTION -->
+        <section id="about" class="page-section">
+            <h2 class="text-4xl md:text-5xl font-display font-bold text-center mb-16 text-gray-900 dark:text-white">
+                About <span class="text-theme-500">Me</span>
+            </h2>
+
+            <div class="grid lg:grid-cols-2 gap-12">
+                <!-- Academic Journey -->
+                <div class="space-y-8">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2 border-b border-gray-200 dark:border-gray-800 pb-4">
+                        <i data-lucide="graduation-cap" class="text-theme-500"></i> Academic Journey
+                    </h3>
+                    
+                    <div class="relative border-l-2 border-theme-500/30 pl-6 space-y-8 ml-3">
+                        <div class="relative">
+                            <div class="absolute -left-[35px] top-1 w-4 h-4 rounded-full bg-theme-500 border-4 border-white dark:border-surface-dark"></div>
+                            <span class="text-xs font-bold text-theme-600 dark:text-theme-400">2024 - 2028</span>
+                            <h4 class="text-lg font-bold text-gray-900 dark:text-white mt-1">B.Sc. Computer Science & AI</h4>
+                            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Central University of Andhra Pradesh</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">Current CGPA: <strong>7.5</strong>. Focusing on Deep Learning, Medical Imaging, and GenAI.</p>
+                        </div>
+
+                        <div class="relative">
+                            <div class="absolute -left-[35px] top-1 w-4 h-4 rounded-full bg-blue-500 border-4 border-white dark:border-surface-dark"></div>
+                            <span class="text-xs font-bold text-blue-600 dark:text-blue-400">Recent Internship</span>
+                            <h4 class="text-lg font-bold text-gray-900 dark:text-white mt-1">Software Development Intern</h4>
+                            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">ProVistaHub</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">Built automated GST invoice systems and integrated an OpenAI customer support chatbot.</p>
+                        </div>
+
+                        <div class="relative">
+                            <div class="absolute -left-[35px] top-1 w-4 h-4 rounded-full bg-gray-400 border-4 border-white dark:border-surface-dark"></div>
+                            <span class="text-xs font-bold text-gray-500 dark:text-gray-400">2010 - 2023</span>
+                            <h4 class="text-lg font-bold text-gray-900 dark:text-white mt-1">Class XII (PCM)</h4>
+                            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Kendriya Vidyalaya Kankarbagh</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">Completed primary & secondary education with a strong analytical foundation in Physics and Math.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Technical Skills -->
+                <div class="glass-card p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-200 dark:border-gray-800 pb-4">
+                        Core Competencies
+                    </h3>
+                    
+                    <div class="space-y-5 mb-8">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1 font-bold text-gray-700 dark:text-gray-300"><span>Python & PyTorch</span><span>90%</span></div>
+                            <div class="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2 overflow-hidden"><div class="skill-bar-fill w-[90%]"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1 font-bold text-gray-700 dark:text-gray-300"><span>AI/ML & Comp. Vision (YOLO/U-Net)</span><span>85%</span></div>
+                            <div class="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2 overflow-hidden"><div class="skill-bar-fill w-[85%]"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1 font-bold text-gray-700 dark:text-gray-300"><span>Web Dev (JS, HTML, CSS, Node)</span><span>80%</span></div>
+                            <div class="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2 overflow-hidden"><div class="skill-bar-fill w-[80%]"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1 font-bold text-gray-700 dark:text-gray-300"><span>Java & OOP</span><span>75%</span></div>
+                            <div class="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2 overflow-hidden"><div class="skill-bar-fill w-[75%]"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1 font-bold text-gray-700 dark:text-gray-300"><span>3D Viz (Three.js)</span><span>70%</span></div>
+                            <div class="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2 overflow-hidden"><div class="skill-bar-fill w-[70%]"></div></div>
+                        </div>
+                    </div>
+
+                    <!-- AI Skills Radar Chart -->
+                    <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 mt-8">AI Proficiency Radar</h4>
+                    <div class="relative w-full aspect-square max-w-[300px] mx-auto mb-8">
+                        <svg viewBox="0 0 100 100" class="w-full h-full overflow-visible">
+                            <!-- Radar Grid -->
+                            <polygon points="50,10 90,30 90,70 50,90 10,70 10,30" fill="none" stroke="currentColor" stroke-width="0.5" class="text-gray-300 dark:text-gray-700" />
+                            <polygon points="50,30 70,40 70,60 50,70 30,60 30,40" fill="none" stroke="currentColor" stroke-width="0.5" class="text-gray-300 dark:text-gray-700" />
+                            <!-- Axes -->
+                            <line x1="50" y1="50" x2="50" y2="10" stroke="currentColor" stroke-width="0.5" class="text-gray-300 dark:text-gray-700" />
+                            <line x1="50" y1="50" x2="90" y2="30" stroke="currentColor" stroke-width="0.5" class="text-gray-300 dark:text-gray-700" />
+                            <line x1="50" y1="50" x2="90" y2="70" stroke="currentColor" stroke-width="0.5" class="text-gray-300 dark:text-gray-700" />
+                            <line x1="50" y1="50" x2="50" y2="90" stroke="currentColor" stroke-width="0.5" class="text-gray-300 dark:text-gray-700" />
+                            <line x1="50" y1="50" x2="10" y2="70" stroke="currentColor" stroke-width="0.5" class="text-gray-300 dark:text-gray-700" />
+                            <line x1="50" y1="50" x2="10" y2="30" stroke="currentColor" stroke-width="0.5" class="text-gray-300 dark:text-gray-700" />
+                            
+                            <!-- Data Polygon (Animated via CSS) -->
+                            <polygon points="50,15 85,35 80,65 50,85 20,60 15,35" fill="var(--theme-500)" fill-opacity="0.3" stroke="var(--theme-500)" stroke-width="2" class="transform origin-center hover:scale-105 transition-transform duration-500" />
+                            
+                            <!-- Labels -->
+                            <text x="50" y="5" font-size="4" text-anchor="middle" class="fill-gray-700 dark:fill-gray-300 font-bold">Comp. Vision</text>
+                            <text x="95" y="30" font-size="4" text-anchor="start" class="fill-gray-700 dark:fill-gray-300 font-bold">Web Dev</text>
+                            <text x="95" y="75" font-size="4" text-anchor="start" class="fill-gray-700 dark:fill-gray-300 font-bold">Backend</text>
+                            <text x="50" y="98" font-size="4" text-anchor="middle" class="fill-gray-700 dark:fill-gray-300 font-bold">Research</text>
+                            <text x="5" y="75" font-size="4" text-anchor="end" class="fill-gray-700 dark:fill-gray-300 font-bold">GenAI</text>
+                            <text x="5" y="30" font-size="4" text-anchor="end" class="fill-gray-700 dark:fill-gray-300 font-bold">NLP</text>
+                        </svg>
+                    </div>
+
+                    <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 border-t border-gray-200 dark:border-gray-800 pt-6">Tech Stack Library</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded text-xs font-bold text-gray-800 dark:text-gray-200">Python</span>
+                        <span class="px-3 py-1 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded text-xs font-bold text-gray-800 dark:text-gray-200">Java</span>
+                        <span class="px-3 py-1 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded text-xs font-bold text-gray-800 dark:text-gray-200">JavaScript</span>
+                        <span class="px-3 py-1 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded text-xs font-bold text-gray-800 dark:text-gray-200">PyTorch</span>
+                        <span class="px-3 py-1 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded text-xs font-bold text-gray-800 dark:text-gray-200">YOLOv8</span>
+                        <span class="px-3 py-1 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded text-xs font-bold text-gray-800 dark:text-gray-200">U-Net</span>
+                        <span class="px-3 py-1 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded text-xs font-bold text-gray-800 dark:text-gray-200">Three.js</span>
+                        <span class="px-3 py-1 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded text-xs font-bold text-gray-800 dark:text-gray-200">OpenAI API</span>
+                        <span class="px-3 py-1 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded text-xs font-bold text-gray-800 dark:text-gray-200">TailwindCSS</span>
+                        <span class="px-3 py-1 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded text-xs font-bold text-gray-800 dark:text-gray-200">Git/GitHub</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. PROJECTS GRID SECTION -->
+        <section id="projects" class="page-section">
+            <h2 class="text-4xl md:text-5xl font-display font-bold text-center mb-16 text-gray-900 dark:text-white">
+                Featured <span class="text-theme-500">Case Studies</span>
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                
+                <!-- Project 1 -->
+                <div class="glass-card overflow-hidden group cursor-pointer hover:-translate-y-2 transition-transform shadow-xl" onclick="openProject('tb')">
+                    <div class="h-56 bg-gray-100 dark:bg-gray-800 relative overflow-hidden flex items-center justify-center border-b border-gray-200 dark:border-gray-700">
+                        <!-- UPLOAD IMAGE HERE: Replace src with your image -->
+                        <!-- <img src="your-image.jpg" class="..."> -->
+                        <img src="https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=800&q=80" alt="TB Detection" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-700 z-20">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-20"></div>
+                        <div class="absolute bottom-4 left-4 z-30">
+                            <span class="bg-theme-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg mb-2 inline-block">Computer Vision</span>
+                            <h3 class="text-2xl font-bold text-white leading-tight">AI Tuberculosis Detection & 3D Vis.</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-gray-700 dark:text-gray-400 mb-4 line-clamp-2">Deep Learning pipeline achieving 95% accuracy using YOLOv8 & U-Net, paired with a pseudo-3D medical visualization engine.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs px-2 py-1 bg-gray-100 dark:bg-surface-dark rounded text-gray-700 dark:text-gray-300 font-bold border border-gray-200 dark:border-gray-700">PyTorch</span>
+                            <span class="text-xs px-2 py-1 bg-gray-100 dark:bg-surface-dark rounded text-gray-700 dark:text-gray-300 font-bold border border-gray-200 dark:border-gray-700">YOLOv8</span>
+                            <span class="text-xs px-2 py-1 bg-gray-100 dark:bg-surface-dark rounded text-gray-700 dark:text-gray-300 font-bold border border-gray-200 dark:border-gray-700">Three.js</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="glass-card overflow-hidden group cursor-pointer hover:-translate-y-2 transition-transform shadow-xl" onclick="openProject('resumeforge')">
+                    <div class="h-56 bg-gray-100 dark:bg-gray-800 relative overflow-hidden flex items-center justify-center border-b border-gray-200 dark:border-gray-700">
+                        <!-- UPLOAD IMAGE HERE: Replace src with your image -->
+                        <img src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&w=800&q=80" alt="ResumeForge" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-700 z-20">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-20"></div>
+                        <div class="absolute bottom-4 left-4 z-30">
+                            <span class="bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg mb-2 inline-block">Generative AI</span>
+                            <h3 class="text-2xl font-bold text-white leading-tight">ResumeForge AI Platform</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-gray-700 dark:text-gray-400 mb-4 line-clamp-2">AI-driven resume optimization system with real-time ATS scoring algorithms, keyword-matching, and multi-layout rendering.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs px-2 py-1 bg-gray-100 dark:bg-surface-dark rounded text-gray-700 dark:text-gray-300 font-bold border border-gray-200 dark:border-gray-700">OpenAI API</span>
+                            <span class="text-xs px-2 py-1 bg-gray-100 dark:bg-surface-dark rounded text-gray-700 dark:text-gray-300 font-bold border border-gray-200 dark:border-gray-700">JavaScript</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="glass-card overflow-hidden group cursor-pointer hover:-translate-y-2 transition-transform shadow-xl" onclick="openProject('provista')">
+                    <div class="h-56 bg-gray-100 dark:bg-gray-800 relative overflow-hidden flex items-center justify-center border-b border-gray-200 dark:border-gray-700">
+                        <!-- UPLOAD IMAGE HERE: Replace src with your image -->
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80" alt="ProVistaHub" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-700 z-20">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-20"></div>
+                        <div class="absolute bottom-4 left-4 z-30">
+                            <span class="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg mb-2 inline-block">Full Stack</span>
+                            <h3 class="text-2xl font-bold text-white leading-tight">ProVistaHub System</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-gray-700 dark:text-gray-400 mb-4 line-clamp-2">Developed during internship. GST-enabled automated invoice generation system with an integrated AI customer support chatbot.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs px-2 py-1 bg-gray-100 dark:bg-surface-dark rounded text-gray-700 dark:text-gray-300 font-bold border border-gray-200 dark:border-gray-700">Web Tech</span>
+                            <span class="text-xs px-2 py-1 bg-gray-100 dark:bg-surface-dark rounded text-gray-700 dark:text-gray-300 font-bold border border-gray-200 dark:border-gray-700">LLM Chatbot</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 4 -->
+                <div class="glass-card overflow-hidden group cursor-pointer hover:-translate-y-2 transition-transform shadow-xl" onclick="openProject('storage')">
+                    <div class="h-56 bg-gray-100 dark:bg-gray-800 relative overflow-hidden flex items-center justify-center border-b border-gray-200 dark:border-gray-700">
+                        <!-- UPLOAD IMAGE HERE: Replace src with your image -->
+                        <img src="https://images.unsplash.com/photo-1587293852726-694364abdf47?auto=format&fit=crop&w=800&q=80" alt="Storage" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-700 z-20">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-20"></div>
+                        <div class="absolute bottom-4 left-4 z-30">
+                            <span class="bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg mb-2 inline-block">3D Web</span>
+                            <h3 class="text-2xl font-bold text-white leading-tight">Industrial 3D Configurator</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-gray-700 dark:text-gray-400 mb-4 line-clamp-2">Production-level catalog tool featuring an interactive 3D rack configurator with automated WhatsApp API inquiry routing.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs px-2 py-1 bg-gray-100 dark:bg-surface-dark rounded text-gray-700 dark:text-gray-300 font-bold border border-gray-200 dark:border-gray-700">Three.js</span>
+                            <span class="text-xs px-2 py-1 bg-gray-100 dark:bg-surface-dark rounded text-gray-700 dark:text-gray-300 font-bold border border-gray-200 dark:border-gray-700">WhatsApp API</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 3B. PROJECT DETAILS (Hidden by default, shown via JS) -->
+        <section id="project-detail" class="page-section">
+            <button onclick="navigate('projects')" class="mb-8 flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-theme-500 transition-colors font-bold">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i> Back to All Projects
+            </button>
+
+            <!-- Details Container (Hardcoded for SEO and reliability) -->
+            <div id="pd-tb" class="hidden">
+                <div class="glass-card p-8 md:p-12">
+                    <div class="flex justify-between items-start mb-8">
+                        <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white leading-tight">AI Tuberculosis Detection & Pseudo-3D Lung Visualization</h2>
+                        <a href="https://github.com/Premierwhiz" target="_blank" class="p-3 bg-gray-100 dark:bg-surface-dark border border-gray-300 dark:border-gray-700 rounded-xl hover:text-theme-500 transition-colors"><i data-lucide="github"></i></a>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="md:col-span-2 space-y-12">
+                            
+                            <!-- Project Timeline -->
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-200 dark:border-gray-800 pb-2">Development Timeline</h3>
+                                <div class="flex flex-col md:flex-row gap-4 relative">
+                                    <div class="absolute top-1/2 left-0 w-full h-1 bg-gray-200 dark:bg-gray-800 hidden md:block -z-10"></div>
+                                    
+                                    <div class="flex-1 bg-white dark:bg-surface-dark p-4 rounded-xl border border-gray-200 dark:border-gray-700 relative">
+                                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-blue-500 border-4 border-white dark:border-surface-dark hidden md:block"></div>
+                                        <h4 class="font-bold text-sm text-blue-500">1. Research</h4>
+                                        <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Acquired TBX11K dataset, studied current clinical challenges with 2D X-Rays.</p>
+                                    </div>
+                                    
+                                    <div class="flex-1 bg-white dark:bg-surface-dark p-4 rounded-xl border border-gray-200 dark:border-gray-700 relative">
+                                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-purple-500 border-4 border-white dark:border-surface-dark hidden md:block"></div>
+                                        <h4 class="font-bold text-sm text-purple-500">2. Prototyping</h4>
+                                        <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Tested basic CNNs. Poor lesion localization. Integrated Grad-CAM.</p>
+                                    </div>
+                                    
+                                    <div class="flex-1 bg-white dark:bg-surface-dark p-4 rounded-xl border border-theme-500/50 relative shadow-[0_0_15px_rgba(20,184,166,0.2)]">
+                                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-theme-500 border-4 border-white dark:border-surface-dark hidden md:block animate-pulse"></div>
+                                        <h4 class="font-bold text-sm text-theme-500">3. Architecture Shift</h4>
+                                        <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Moved to YOLOv8 + U-Net. Added MiDaS for pseudo-depth generation.</p>
+                                    </div>
+                                    
+                                    <div class="flex-1 bg-white dark:bg-surface-dark p-4 rounded-xl border border-gray-200 dark:border-gray-700 relative">
+                                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-green-500 border-4 border-white dark:border-surface-dark hidden md:block"></div>
+                                        <h4 class="font-bold text-sm text-green-500">4. Deployment</h4>
+                                        <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Rendered interactive 3D visualizations in the browser using Three.js.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Architecture Flowchart -->
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-200 dark:border-gray-800 pb-2">System Architecture</h3>
+                                <div class="bg-gray-100 dark:bg-surface-dark p-6 rounded-xl border border-gray-200 dark:border-gray-700 font-mono text-sm text-gray-700 dark:text-gray-300 flex flex-col md:flex-row items-center justify-between text-center gap-4">
+                                    <div class="p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-black/50 w-full md:w-auto">
+                                        <i data-lucide="image" class="w-6 h-6 mx-auto mb-2 text-blue-500"></i> Input X-Ray
+                                    </div>
+                                    <i data-lucide="arrow-right" class="hidden md:block text-gray-400"></i>
+                                    <i data-lucide="arrow-down" class="block md:hidden text-gray-400"></i>
+                                    
+                                    <div class="p-3 border border-theme-500/50 rounded bg-theme-500/10 w-full md:w-auto">
+                                        <i data-lucide="layers" class="w-6 h-6 mx-auto mb-2 text-theme-500"></i> U-Net Segmentation
+                                    </div>
+                                    <i data-lucide="arrow-right" class="hidden md:block text-gray-400"></i>
+                                    <i data-lucide="arrow-down" class="block md:hidden text-gray-400"></i>
+
+                                    <div class="p-3 border border-purple-500/50 rounded bg-purple-500/10 w-full md:w-auto">
+                                        <i data-lucide="scan" class="w-6 h-6 mx-auto mb-2 text-purple-500"></i> YOLOv8 + MiDaS
+                                    </div>
+                                    <i data-lucide="arrow-right" class="hidden md:block text-gray-400"></i>
+                                    <i data-lucide="arrow-down" class="block md:hidden text-gray-400"></i>
+
+                                    <div class="p-3 border border-green-500/50 rounded bg-green-500/10 w-full md:w-auto">
+                                        <i data-lucide="box" class="w-6 h-6 mx-auto mb-2 text-green-500"></i> Three.js Render
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Failure & Lessons Section -->
+                            <div class="bg-red-500/5 border border-red-500/20 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-red-600 dark:text-red-400 mb-2 flex items-center gap-2"><i data-lucide="alert-triangle"></i> Lessons Learned & Failures</h3>
+                                <p class="text-gray-700 dark:text-gray-300 leading-relaxed text-sm">
+                                    <strong>Initial Failure:</strong> Started the project using basic CNN architectures (ResNet) to draw bounding boxes around lesions. The bounding boxes were too inaccurate and provided no anatomical context to clinicians. <br><br>
+                                    <strong>The Pivot:</strong> I realized pixel-perfect semantic segmentation was required. I switched to a U-Net architecture to mask the lungs perfectly, and layered YOLOv8 for precise lesion localization, drastically improving the utility of the tool.
+                                </p>
+                            </div>
+
+                        </div>
+                        <div class="space-y-6">
+                            <div class="bg-gray-100 dark:bg-surface-dark p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+                                <h4 class="font-bold text-gray-900 dark:text-white mb-4">Key Metrics</h4>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between"><span class="text-gray-500">Accuracy</span><strong class="text-green-500 font-mono text-lg">95.2%</strong></div>
+                                    <div class="flex justify-between"><span class="text-gray-500">Datasets</span><strong class="text-gray-900 dark:text-white">TBX11K, Shenzhen</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="pd-resumeforge" class="hidden">
+                <div class="glass-card p-8 md:p-12">
+                    <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">ResumeForge AI</h2>
+                    <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">An AI-driven resume optimization system with real-time ATS scoring. I developed a keyword-matching and structural evaluation algorithm for resume ranking, integrating the OpenAI API for AI-assisted content generation. It includes a multi-layout rendering engine (Harvard, Sidebar) and exports ATS-safe PDF/DOCX.</p>
+                    <a href="https://github.com/Premierwhiz" target="_blank" class="px-6 py-3 bg-theme-500 text-white rounded-lg font-bold inline-block">View Source Code</a>
+                </div>
+            </div>
+
+            <div id="pd-provista" class="hidden">
+                <div class="glass-card p-8 md:p-12">
+                    <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">ProVistaHub System (Internship)</h2>
+                    <p class="text-lg text-gray-700 dark:text-gray-300">During my Software Development Internship, I designed a GST-enabled automated invoice generation system for real-world business operations. Implemented dynamic billing calculations, structured PDF generation, and an AI chatbot for automating customer support queries.</p>
+                </div>
+            </div>
+
+            <div id="pd-storage" class="hidden">
+                <div class="glass-card p-8 md:p-12">
+                    <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">Industrial Storage Solutions Platform</h2>
+                    <p class="text-lg text-gray-700 dark:text-gray-300">Developed a production-level industrial website with structured product catalog management. The highlight is an interactive 3D rack configurator using Three.js, integrated with an automated client inquiry system via WhatsApp API.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. RESEARCH LAB SECTION -->
+        <section id="research" class="page-section">
+            <h2 class="text-4xl md:text-5xl font-display font-bold text-center mb-12 text-gray-900 dark:text-white">
+                Research <span class="text-theme-500">Lab</span>
+            </h2>
+            <p class="text-center text-gray-600 dark:text-gray-400 mb-12 max-w-2xl mx-auto text-lg">Exploring datasets, experimenting with architectures, and drafting working papers in Medical Diagnostics and Generative AI.</p>
+
+            <div class="glass-card p-8 border-l-4 border-l-theme-500 mb-8">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Deep Learning for Tuberculosis Detection via Pulmonary Segmentation</h3>
+                    <span class="bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 px-3 py-1 rounded-full text-xs font-bold">Experimenting</span>
+                </div>
+                <p class="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">Investigating the efficacy of YOLOv8 vs U-Net architectures for bounding box detection versus semantic segmentation of pulmonary lesions. Mapping 2D X-rays to pseudo-3D spaces using MiDaS depth estimation to aid clinical explainability.</p>
+                
+                <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-2">Datasets Utilized:</h4>
+                <div class="flex gap-2 mb-6">
+                    <span class="px-2 py-1 bg-gray-200 dark:bg-surface-dark rounded text-xs text-gray-700 dark:text-gray-300 font-mono border border-gray-300 dark:border-gray-700">TBX11K</span>
+                    <span class="px-2 py-1 bg-gray-200 dark:bg-surface-dark rounded text-xs text-gray-700 dark:text-gray-300 font-mono border border-gray-300 dark:border-gray-700">Shenzhen Hosp.</span>
+                    <span class="px-2 py-1 bg-gray-200 dark:bg-surface-dark rounded text-xs text-gray-700 dark:text-gray-300 font-mono border border-gray-300 dark:border-gray-700">Montgomery</span>
+                </div>
+            </div>
+
+            <!-- AI Model Zoo & Reading List -->
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="glass-card p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-200 dark:border-gray-800 pb-2">AI Model Zoo</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Architectures deployed across my projects:</p>
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded bg-blue-500/10 flex items-center justify-center text-blue-500 font-bold font-mono text-xs">YL</div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 dark:text-white text-sm">YOLOv8</h4>
+                                <p class="text-xs text-gray-500 mt-1">Real-time object detection used for localized bounding boxes in medical imaging.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded bg-purple-500/10 flex items-center justify-center text-purple-500 font-bold font-mono text-xs">UN</div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 dark:text-white text-sm">U-Net</h4>
+                                <p class="text-xs text-gray-500 mt-1">Convolutional networks for biomedical image segmentation (pulmonary masking).</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded bg-theme-500/10 flex items-center justify-center text-theme-500 font-bold font-mono text-xs">MD</div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 dark:text-white text-sm">MiDaS</h4>
+                                <p class="text-xs text-gray-500 mt-1">Robust monocular depth estimation to convert 2D X-rays to pseudo-3D heightmaps.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="glass-card p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-200 dark:border-gray-800 pb-2">Research Reading List</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Currently studying:</p>
+                    <ul class="space-y-4">
+                        <li class="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-black/20">
+                            <div>
+                                <h4 class="font-bold text-gray-900 dark:text-white text-sm line-clamp-1">Deep Learning for Healthcare</h4>
+                                <p class="text-xs text-gray-500">Textbook / Methodology</p>
+                            </div>
+                            <i data-lucide="book-open" class="text-gray-400"></i>
+                        </li>
+                        <li class="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-black/20">
+                            <div>
+                                <h4 class="font-bold text-gray-900 dark:text-white text-sm line-clamp-1">Attention Is All You Need</h4>
+                                <p class="text-xs text-gray-500">Vaswani et al. (Transformers)</p>
+                            </div>
+                            <i data-lucide="file-text" class="text-gray-400"></i>
+                        </li>
+                        <li class="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-black/20">
+                            <div>
+                                <h4 class="font-bold text-gray-900 dark:text-white text-sm line-clamp-1">3D U-Net for Volumetric Seg.</h4>
+                                <p class="text-xs text-gray-500">Çiçek et al.</p>
+                            </div>
+                            <i data-lucide="file-text" class="text-gray-400"></i>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. RESUME SECTION -->
+        <section id="resume" class="page-section">
+            <div class="flex justify-between items-end mb-8">
+                <h2 class="text-4xl md:text-5xl font-display font-bold text-gray-900 dark:text-white">Interactive <span class="text-theme-500">CV</span></h2>
+                <button onclick="alert('In a real environment, this triggers a PDF download.')" class="bg-theme-500 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 font-bold shadow-lg hover:scale-105 transition-transform"><i data-lucide="download" class="w-4 h-4"></i> PDF</button>
+            </div>
+
+            <div class="glass-card rounded-2xl p-4 md:p-8 bg-white dark:bg-surface-dark shadow-2xl relative overflow-hidden">
+                <!-- Document Header -->
+                <div class="border-b-2 border-gray-800 dark:border-gray-200 pb-6 mb-8 text-center md:text-left flex flex-col md:flex-row justify-between items-center md:items-end gap-6">
+                    <div>
+                        <h1 class="text-3xl md:text-5xl font-black uppercase tracking-tight text-gray-900 dark:text-white">Ravi Shankar <br>Kr Choudhary</h1>
+                        <p class="text-lg font-bold text-theme-600 dark:text-theme-400 mt-2 uppercase tracking-widest">B.Sc. Computer Science & Artificial Intelligence</p>
+                        <div class="text-sm text-gray-600 dark:text-gray-400 mt-3 flex flex-wrap justify-center md:justify-start gap-4 font-mono">
+                            <span><i data-lucide="phone" class="w-4 h-4 inline"></i> 8252467856</span>
+                            <span><i data-lucide="mail" class="w-4 h-4 inline"></i> rravi582004@gmail.com</span>
+                            <span><i data-lucide="github" class="w-4 h-4 inline"></i> Premierwhiz</span>
+                        </div>
+                    </div>
+                    <img src="https://github.com/Premierwhiz.png" class="w-32 h-32 rounded-xl object-cover border-4 border-gray-200 dark:border-gray-700 shadow-lg hidden md:block" alt="Photo">
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-12 text-gray-800 dark:text-gray-200">
+                    <!-- Left Col -->
+                    <div class="md:col-span-2 space-y-8">
+                        <div>
+                            <h3 class="text-lg font-black uppercase border-b border-gray-300 dark:border-gray-700 pb-2 mb-4 tracking-widest text-theme-600 dark:text-theme-400">Experience</h3>
+                            <div class="mb-4">
+                                <div class="flex justify-between items-baseline"><strong class="text-lg text-gray-900 dark:text-white">Software Dev Intern</strong><span class="text-sm font-bold text-gray-500">Recent</span></div>
+                                <div class="text-theme-600 dark:text-theme-400 font-bold mb-2">ProVistaHub</div>
+                                <ul class="list-disc pl-5 text-sm space-y-1">
+                                    <li>Automated GST-enabled invoice generation system.</li>
+                                    <li>Integrated custom AI Chatbot for customer support.</li>
+                                    <li>Implemented structured reporting modules.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-black uppercase border-b border-gray-300 dark:border-gray-700 pb-2 mb-4 tracking-widest text-theme-600 dark:text-theme-400">Key Projects</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between"><strong class="text-gray-900 dark:text-white">AI Tuberculosis Detection</strong><span class="text-xs font-mono text-gray-500">PyTorch, YOLO</span></div>
+                                    <p class="text-sm mt-1">95% detection accuracy using YOLOv8 & U-Net. Integrated MiDaS depth estimation for pseudo-3D medical visualization in Three.js.</p>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between"><strong class="text-gray-900 dark:text-white">ResumeForge AI</strong><span class="text-xs font-mono text-gray-500">OpenAI API</span></div>
+                                    <p class="text-sm mt-1">AI-driven optimization platform with real-time ATS scoring and multi-layout rendering.</p>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between"><strong class="text-gray-900 dark:text-white">Industrial Storage 3D Configurator</strong><span class="text-xs font-mono text-gray-500">Three.js</span></div>
+                                    <p class="text-sm mt-1">Interactive 3D rack configurator with automated WhatsApp API inquiry routing.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Col -->
+                    <div class="space-y-8">
+                        <div>
+                            <h3 class="text-lg font-black uppercase border-b border-gray-300 dark:border-gray-700 pb-2 mb-4 tracking-widest text-theme-600 dark:text-theme-400">Education</h3>
+                            <div class="mb-4">
+                                <strong class="text-gray-900 dark:text-white block">B.Sc. CS & AI</strong>
+                                <span class="text-sm text-gray-600 dark:text-gray-400 block">Central Univ. of Andhra Pradesh</span>
+                                <span class="text-xs font-bold text-theme-600 dark:text-theme-400 block">2024 - 2028 | CGPA: 7.5</span>
+                            </div>
+                            <div>
+                                <strong class="text-gray-900 dark:text-white block">Class XII (PCM)</strong>
+                                <span class="text-sm text-gray-600 dark:text-gray-400 block">Kendriya Vidyalaya Kankarbagh</span>
+                                <span class="text-xs text-gray-500 block">2010 - 2023</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-black uppercase border-b border-gray-300 dark:border-gray-700 pb-2 mb-4 tracking-widest text-theme-600 dark:text-theme-400">Skills</h3>
+                            <div class="text-sm space-y-2">
+                                <p><strong>Languages:</strong> Python, Java, JS</p>
+                                <p><strong>AI/ML:</strong> PyTorch, YOLOv8, U-Net, Prompt Eng, OpenAI API</p>
+                                <p><strong>Web:</strong> HTML, CSS, Three.js</p>
+                                <p><strong>Tools:</strong> Git, VS Code</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. CERTIFICATES SECTION -->
+        <section id="certificates" class="page-section">
+            <h2 class="text-4xl md:text-5xl font-display font-bold text-center mb-12 text-gray-900 dark:text-white">
+                Verified <span class="text-theme-500">Credentials</span>
+            </h2>
+
+            <!-- Hardcoded Certificates Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="glass-card p-2 rounded-xl group cursor-pointer hover:border-theme-500 transition-colors" onclick="openCertModal('https://placehold.co/800x600/14b8a6/ffffff?text=NPTEL+E-Business')">
+                    <div class="aspect-[4/3] bg-gray-100 dark:bg-surface-dark rounded-lg mb-2 overflow-hidden relative flex items-center justify-center border border-gray-200 dark:border-gray-800">
+                        <!-- UPLOAD CERT 1 HERE: Replace src -->
+                        <img src="https://placehold.co/400x300/14b8a6/ffffff?text=E-Business" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500 z-20">
+                        <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity z-30 flex items-center justify-center">
+                            <i data-lucide="zoom-in" class="text-white w-8 h-8"></i>
+                        </div>
+                    </div>
+                    <h3 class="font-bold text-xs text-center text-gray-900 dark:text-white truncate">NPTEL: E-Business</h3>
+                </div>
+                <div class="glass-card p-2 rounded-xl group cursor-pointer hover:border-theme-500 transition-colors" onclick="openCertModal('https://placehold.co/800x600/14b8a6/ffffff?text=NPTEL+Indian+Knowledge+System')">
+                    <div class="aspect-[4/3] bg-gray-100 dark:bg-surface-dark rounded-lg mb-2 overflow-hidden relative flex items-center justify-center border border-gray-200 dark:border-gray-800">
+                        <!-- UPLOAD CERT 2 HERE: Replace src -->
+                        <img src="https://placehold.co/400x300/14b8a6/ffffff?text=IKS" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500 z-20">
+                        <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity z-30 flex items-center justify-center">
+                            <i data-lucide="zoom-in" class="text-white w-8 h-8"></i>
+                        </div>
+                    </div>
+                    <h3 class="font-bold text-xs text-center text-gray-900 dark:text-white truncate">NPTEL: Indian Knowledge Sys</h3>
+                </div>
+                <div class="glass-card p-2 rounded-xl group cursor-pointer hover:border-theme-500 transition-colors" onclick="openCertModal('https://placehold.co/800x600/a855f7/ffffff?text=GenAI+Mastermind')">
+                    <div class="aspect-[4/3] bg-gray-100 dark:bg-surface-dark rounded-lg mb-2 overflow-hidden relative flex items-center justify-center border border-gray-200 dark:border-gray-800">
+                        <!-- UPLOAD CERT 3 HERE: Replace src -->
+                        <img src="https://placehold.co/400x300/a855f7/ffffff?text=GenAI" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500 z-20">
+                        <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity z-30 flex items-center justify-center">
+                            <i data-lucide="zoom-in" class="text-white w-8 h-8"></i>
+                        </div>
+                    </div>
+                    <h3 class="font-bold text-xs text-center text-gray-900 dark:text-white truncate">Generative AI Mastermind</h3>
+                </div>
+                <div class="glass-card p-2 rounded-xl group cursor-pointer hover:border-theme-500 transition-colors" onclick="openCertModal('https://placehold.co/800x600/3b82f6/ffffff?text=Quantum+Fundamentals')">
+                    <div class="aspect-[4/3] bg-gray-100 dark:bg-surface-dark rounded-lg mb-2 overflow-hidden relative flex items-center justify-center border border-gray-200 dark:border-gray-800">
+                        <!-- UPLOAD CERT 4 HERE: Replace src -->
+                        <img src="https://placehold.co/400x300/3b82f6/ffffff?text=Quantum" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500 z-20">
+                        <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity z-30 flex items-center justify-center">
+                            <i data-lucide="zoom-in" class="text-white w-8 h-8"></i>
+                        </div>
+                    </div>
+                    <h3 class="font-bold text-xs text-center text-gray-900 dark:text-white truncate">Quantum Fundamentals</h3>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. CONTACT SECTION -->
+        <section id="contact" class="page-section">
+            <h2 class="text-4xl md:text-5xl font-display font-bold text-center mb-12 text-gray-900 dark:text-white">
+                Establish <span class="text-theme-500">Connection</span>
+            </h2>
+
+            <div class="max-w-3xl mx-auto glass-card p-8 md:p-12 text-center">
+                <div class="w-20 h-20 mx-auto bg-theme-500/20 text-theme-500 rounded-full flex items-center justify-center mb-6">
+                    <i data-lucide="handshake" class="w-10 h-10"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Open to Internships & Roles</h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-8 text-lg">Looking for an AI Researcher or Computer Vision Developer? Let's discuss how my skills align with your organization.</p>
+                
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="mailto:rravi582004@gmail.com" class="px-8 py-4 bg-theme-500 text-white font-bold rounded-xl hover:bg-theme-600 transition-colors flex items-center justify-center gap-2">
+                        <i data-lucide="mail"></i> Email Me
+                    </a>
+                    <a href="https://wa.me/918252467856" target="_blank" class="px-8 py-4 bg-[#25D366] text-white font-bold rounded-xl hover:bg-[#20bd5a] transition-colors flex items-center justify-center gap-2">
+                        <i data-lucide="phone"></i> WhatsApp
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Certificate Modal -->
+    <div id="cert-modal" class="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md hidden items-center justify-center opacity-0 transition-opacity p-4">
+        <button onclick="closeCertModal()" class="absolute top-6 right-6 text-white hover:text-theme-400 p-2"><i data-lucide="x" class="w-8 h-8"></i></button>
+        <img id="cert-modal-img" src="" class="max-w-full max-h-[90vh] object-contain rounded-lg border border-gray-700 shadow-2xl scale-95 transition-transform">
+        <a id="cert-modal-dl" href="#" download class="absolute bottom-8 px-6 py-3 bg-theme-500 text-white font-bold rounded-full shadow-lg flex items-center gap-2 hover:bg-theme-600 transition-colors"><i data-lucide="download" class="w-4 h-4"></i> Download Certificate</a>
+    </div>
+
+    <!-- Ask My Resume AI Chatbot Widget (RAG Simulator) -->
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        <div id="ai-chatbot" class="hidden w-80 sm:w-96 glass-card rounded-2xl mb-4 flex flex-col overflow-hidden shadow-2xl border-t border-theme-500/40 opacity-0 transform translate-y-4 transition-all duration-300">
+            <div class="bg-gray-100 dark:bg-surface-dark p-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-800">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-r from-theme-500 to-blue-500 flex items-center justify-center text-white"><i data-lucide="database" class="w-4 h-4"></i></div>
+                    <div>
+                        <h4 class="font-bold text-sm text-gray-900 dark:text-white leading-tight">Ask My Resume AI</h4>
+                        <p class="text-[10px] text-theme-500 font-mono">Vector DB: Loaded</p>
+                    </div>
+                </div>
+                <button onclick="toggleChatbot()" class="text-gray-500 hover:text-gray-900 dark:hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            
+            <div id="chat-messages" class="h-72 overflow-y-auto p-4 flex flex-col gap-3 text-sm bg-white/50 dark:bg-black/50">
+                <div class="self-start bg-gray-200 dark:bg-surface-dark border border-gray-300 dark:border-gray-700 px-4 py-2 rounded-xl rounded-tl-none max-w-[85%] text-gray-800 dark:text-gray-200">
+                    Hello! I have ingested Ravi's Resume and Portfolio into my knowledge base (RAG).<br><br>Ask me anything: <br>• "What is his CGPA?" <br>• "Tell me about the TB project." <br>• "What are his AI skills?"
+                </div>
+            </div>
+            
+            <div class="p-3 bg-gray-100 dark:bg-surface-dark border-t border-gray-200 dark:border-gray-800 flex gap-2">
+                <input type="text" id="chat-input" placeholder="Query Ravi's knowledge base..." class="flex-1 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-theme-500 font-mono text-xs" onkeypress="if(event.key==='Enter') sendAIQuery()">
+                <button onclick="sendAIQuery()" class="bg-theme-500 text-white w-10 h-10 flex items-center justify-center rounded-lg hover:bg-theme-600"><i data-lucide="search" class="w-4 h-4"></i></button>
+            </div>
+        </div>
+
+        <button onclick="toggleChatbot()" class="w-14 h-14 bg-gradient-to-r from-theme-500 to-blue-500 text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
+            <i data-lucide="bot" class="w-6 h-6"></i>
+        </button>
+    </div>
+
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Single Page Routing Logic
+        function navigate(pageId) {
+            // Hide all sections
+            document.querySelectorAll('.page-section').forEach(sec => {
+                sec.classList.remove('active');
+            });
+            // Hide detailed project views
+            document.querySelectorAll('[id^="pd-"]').forEach(el => el.classList.add('hidden'));
+            
+            // Show target section
+            const target = document.getElementById(pageId);
+            if(target) {
+                target.classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            // Close mobile menu if open
+            document.getElementById('mobile-menu').classList.add('hidden');
+        }
+
+        // Project Detail Routing
+        function openProject(id) {
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById('project-detail').classList.add('active');
+            document.querySelectorAll('[id^="pd-"]').forEach(el => el.classList.add('hidden'));
+            document.getElementById('pd-' + id).classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Theme Switcher Logic (Exact match to screenshot request)
+        function setTheme(themeClass, element) {
+            // Remove active class from all dots
+            document.querySelectorAll('.theme-dot').forEach(dot => dot.classList.remove('active'));
+            // Add active class to clicked dot
+            if(element) element.classList.add('active');
+
+            // Reset body classes
+            document.body.classList.remove('theme-cyan', 'theme-purple', 'theme-green', 'theme-pink');
+            
+            if(themeClass !== 'theme-cyan') { // Cyan is default root vars
+                document.body.classList.add(themeClass);
+            }
+            
+            updateThreeJSColor();
+        }
+
+        // Dark/Light Mode Logic
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            
+            // Toggle icons directly based on class
+            const moonIcon = document.getElementById('moon-icon');
+            const sunIcon = document.getElementById('sun-icon');
+            
+            if(html.classList.contains('dark')) {
+                moonIcon.classList.remove('block');
+                moonIcon.classList.add('hidden');
+                sunIcon.classList.remove('hidden');
+                sunIcon.classList.add('block');
+            } else {
+                moonIcon.classList.remove('hidden');
+                moonIcon.classList.add('block');
+                sunIcon.classList.remove('block');
+                sunIcon.classList.add('hidden');
+            }
+            
+            updateThreeJSColor();
+        }
+
+        // Modals
+        function openCertModal(src) {
+            const modal = document.getElementById('cert-modal');
+            document.getElementById('cert-modal-img').src = src;
+            document.getElementById('cert-modal-dl').href = src; // Set download link
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => { modal.classList.remove('opacity-0'); }, 10);
+        }
+        function closeCertModal() {
+            const modal = document.getElementById('cert-modal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+        }
+
+        // Chatbot Logic
+        function toggleChatbot() {
+            const bot = document.getElementById('ai-chatbot');
+            if(bot.classList.contains('hidden')) {
+                bot.classList.remove('hidden');
+                setTimeout(() => { bot.classList.remove('opacity-0', 'translate-y-4'); }, 10);
+            } else {
+                bot.classList.add('opacity-0', 'translate-y-4');
+                setTimeout(() => { bot.classList.add('hidden'); }, 300);
+            }
+        }
+
+        function sendAIQuery() {
+            const input = document.getElementById('chat-input');
+            const msg = input.value.trim();
+            if(!msg) return;
+
+            const chatArea = document.getElementById('chat-messages');
+            chatArea.innerHTML += `<div class="self-end bg-theme-600 text-white px-4 py-2 rounded-xl rounded-tr-none max-w-[85%]">${msg}</div>`;
+            input.value = '';
+            chatArea.scrollTop = chatArea.scrollHeight;
+            
+            // Add loading indicator
+            const loadingId = 'loading-' + Date.now();
+            chatArea.innerHTML += `<div id="${loadingId}" class="self-start text-xs text-gray-500 font-mono italic px-4 py-1">Searching vector database...</div>`;
+            chatArea.scrollTop = chatArea.scrollHeight;
+
+            setTimeout(() => {
+                document.getElementById(loadingId).remove();
+                let response = "I couldn't find a specific match in the knowledge base. You can email Ravi directly at rravi582004@gmail.com for more details!";
+                const lowerMsg = msg.toLowerCase();
+                
+                // Simulated RAG Responses based on exact portfolio data
+                if(lowerMsg.includes('tb') || lowerMsg.includes('tuberculosis') || lowerMsg.includes('project')) {
+                    response = "<strong>[Source: Projects DB]</strong><br>Ravi built an AI Tuberculosis Detection system using YOLOv8 & U-Net, achieving 95% accuracy on the TBX11K and Shenzhen datasets. It includes a unique pseudo-3D medical visualization engine using Three.js.";
+                } else if(lowerMsg.includes('cgpa') || lowerMsg.includes('education') || lowerMsg.includes('college')) {
+                    response = "<strong>[Source: Education DB]</strong><br>Ravi is pursuing a B.Sc. in Computer Science & Artificial Intelligence at the Central University of Andhra Pradesh (2024-2028). His current CGPA is 7.5.";
+                } else if(lowerMsg.includes('skills') || lowerMsg.includes('tech') || lowerMsg.includes('stack')) {
+                    response = "<strong>[Source: Skills DB]</strong><br>Ravi's core competencies are:<br>• Python & PyTorch (90%)<br>• AI/ML & Computer Vision (YOLO/U-Net) (85%)<br>• Web Dev (HTML, CSS, JS) (80%)<br>• 3D Viz (Three.js) (70%)";
+                } else if(lowerMsg.includes('intern') || lowerMsg.includes('provista') || lowerMsg.includes('work')) {
+                    response = "<strong>[Source: Experience DB]</strong><br>Ravi worked as a Software Development Intern at ProVistaHub, where he built automated GST invoice systems and integrated an OpenAI customer support chatbot.";
+                }
+
+                chatArea.innerHTML += `<div class="self-start bg-gray-200 dark:bg-surface-dark border border-gray-300 dark:border-gray-700 px-4 py-2 rounded-xl rounded-tl-none max-w-[85%] text-gray-800 dark:text-gray-200 text-sm leading-relaxed">${response}</div>`;
+                chatArea.scrollTop = chatArea.scrollHeight;
+            }, 1000); // Slight delay to simulate DB retrieval
+        }
+
+        // Three.js Background Animation
+        let scene, camera, renderer, particles;
+        function initThreeJS() {
+            const canvas = document.getElementById('bg-canvas');
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 100;
+
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            const geometry = new THREE.BufferGeometry();
+            const posArray = new Float32Array(500 * 3);
+            for(let i = 0; i < 500 * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 350;
+            }
+            geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            
+            // Get initial theme color
+            const colorHex = getComputedStyle(document.body).getPropertyValue('--theme-500').trim() || '#14b8a6';
+            
+            const material = new THREE.PointsMaterial({
+                size: 2, color: colorHex, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending
+            });
+
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+
+            let mouseX = 0, mouseY = 0;
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX; mouseY = e.clientY;
+            });
+
+            const animate = () => {
+                requestAnimationFrame(animate);
+                particles.rotation.y += 0.001;
+                particles.rotation.x += 0.0005;
+                camera.position.x += ((mouseX - window.innerWidth/2) * 0.05 - camera.position.x) * 0.02;
+                camera.position.y += (-(mouseY - window.innerHeight/2) * 0.05 - camera.position.y) * 0.02;
+                camera.lookAt(scene.position);
+                renderer.render(scene, camera);
+            };
+            animate();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        function updateThreeJSColor() {
+            if(particles) {
+                setTimeout(() => {
+                    let hex = getComputedStyle(document.body).getPropertyValue('--theme-500').trim();
+                    if(hex.startsWith('#')) particles.material.color.setHex(parseInt(hex.replace('#', '0x')));
+                }, 50);
+            }
+        }
+
+        // On Load
+        window.onload = () => {
+            initThreeJS();
+            gsap.from("nav", { y: -100, opacity: 0, duration: 1, ease: "power3.out" });
+        };
+    </script>
+</body>
+</html>
