@@ -380,8 +380,6 @@
                 <!-- Project 1 -->
                 <div class="glass-card overflow-hidden group cursor-pointer hover:-translate-y-2 transition-transform shadow-xl" onclick="openProject('tb')">
                     <div class="h-56 bg-gray-100 dark:bg-gray-800 relative overflow-hidden flex items-center justify-center border-b border-gray-200 dark:border-gray-700">
-                        <!-- UPLOAD IMAGE HERE: Replace src with your image -->
-                        <!-- <img src="your-image.jpg" class="..."> -->
                         <img src="https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=800&q=80" alt="TB Detection" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-700 z-20">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-20"></div>
                         <div class="absolute bottom-4 left-4 z-30">
@@ -402,7 +400,6 @@
                 <!-- Project 2 -->
                 <div class="glass-card overflow-hidden group cursor-pointer hover:-translate-y-2 transition-transform shadow-xl" onclick="openProject('resumeforge')">
                     <div class="h-56 bg-gray-100 dark:bg-gray-800 relative overflow-hidden flex items-center justify-center border-b border-gray-200 dark:border-gray-700">
-                        <!-- UPLOAD IMAGE HERE: Replace src with your image -->
                         <img src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&w=800&q=80" alt="ResumeForge" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-700 z-20">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-20"></div>
                         <div class="absolute bottom-4 left-4 z-30">
@@ -422,7 +419,6 @@
                 <!-- Project 3 -->
                 <div class="glass-card overflow-hidden group cursor-pointer hover:-translate-y-2 transition-transform shadow-xl" onclick="openProject('provista')">
                     <div class="h-56 bg-gray-100 dark:bg-gray-800 relative overflow-hidden flex items-center justify-center border-b border-gray-200 dark:border-gray-700">
-                        <!-- UPLOAD IMAGE HERE: Replace src with your image -->
                         <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80" alt="ProVistaHub" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-700 z-20">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-20"></div>
                         <div class="absolute bottom-4 left-4 z-30">
@@ -442,7 +438,6 @@
                 <!-- Project 4 -->
                 <div class="glass-card overflow-hidden group cursor-pointer hover:-translate-y-2 transition-transform shadow-xl" onclick="openProject('storage')">
                     <div class="h-56 bg-gray-100 dark:bg-gray-800 relative overflow-hidden flex items-center justify-center border-b border-gray-200 dark:border-gray-700">
-                        <!-- UPLOAD IMAGE HERE: Replace src with your image -->
                         <img src="https://images.unsplash.com/photo-1587293852726-694364abdf47?auto=format&fit=crop&w=800&q=80" alt="Storage" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-700 z-20">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-20"></div>
                         <div class="absolute bottom-4 left-4 z-30">
@@ -762,40 +757,36 @@
 
             <!-- Hardcoded Certificates Grid -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="glass-card p-2 rounded-xl group cursor-pointer hover:border-theme-500 transition-colors" onclick="openCertModal('https://placehold.co/800x600/14b8a6/ffffff?text=NPTEL+E-Business')">
+                <div class="glass-card p-2 rounded-xl group cursor-pointer hover:border-theme-500 transition-colors" id="cert-1-card">
                     <div class="aspect-[4/3] bg-gray-100 dark:bg-surface-dark rounded-lg mb-2 overflow-hidden relative flex items-center justify-center border border-gray-200 dark:border-gray-800">
-                        <!-- UPLOAD CERT 1 HERE: Replace src -->
-                        <img src="https://placehold.co/400x300/14b8a6/ffffff?text=E-Business" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500 z-20">
+                        <img id="cert-1-img" src="" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500 z-20">
                         <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity z-30 flex items-center justify-center">
                             <i data-lucide="zoom-in" class="text-white w-8 h-8"></i>
                         </div>
                     </div>
                     <h3 class="font-bold text-xs text-center text-gray-900 dark:text-white truncate">NPTEL: E-Business</h3>
                 </div>
-                <div class="glass-card p-2 rounded-xl group cursor-pointer hover:border-theme-500 transition-colors" onclick="openCertModal('https://placehold.co/800x600/14b8a6/ffffff?text=NPTEL+Indian+Knowledge+System')">
+                <div class="glass-card p-2 rounded-xl group cursor-pointer hover:border-theme-500 transition-colors" id="cert-2-card">
                     <div class="aspect-[4/3] bg-gray-100 dark:bg-surface-dark rounded-lg mb-2 overflow-hidden relative flex items-center justify-center border border-gray-200 dark:border-gray-800">
-                        <!-- UPLOAD CERT 2 HERE: Replace src -->
-                        <img src="https://placehold.co/400x300/14b8a6/ffffff?text=IKS" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500 z-20">
+                        <img id="cert-2-img" src="" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500 z-20">
                         <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity z-30 flex items-center justify-center">
                             <i data-lucide="zoom-in" class="text-white w-8 h-8"></i>
                         </div>
                     </div>
                     <h3 class="font-bold text-xs text-center text-gray-900 dark:text-white truncate">NPTEL: Indian Knowledge Sys</h3>
                 </div>
-                <div class="glass-card p-2 rounded-xl group cursor-pointer hover:border-theme-500 transition-colors" onclick="openCertModal('https://placehold.co/800x600/a855f7/ffffff?text=GenAI+Mastermind')">
+                <div class="glass-card p-2 rounded-xl group cursor-pointer hover:border-theme-500 transition-colors" id="cert-3-card">
                     <div class="aspect-[4/3] bg-gray-100 dark:bg-surface-dark rounded-lg mb-2 overflow-hidden relative flex items-center justify-center border border-gray-200 dark:border-gray-800">
-                        <!-- UPLOAD CERT 3 HERE: Replace src -->
-                        <img src="https://placehold.co/400x300/a855f7/ffffff?text=GenAI" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500 z-20">
+                        <img id="cert-3-img" src="" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500 z-20">
                         <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity z-30 flex items-center justify-center">
                             <i data-lucide="zoom-in" class="text-white w-8 h-8"></i>
                         </div>
                     </div>
                     <h3 class="font-bold text-xs text-center text-gray-900 dark:text-white truncate">Generative AI Mastermind</h3>
                 </div>
-                <div class="glass-card p-2 rounded-xl group cursor-pointer hover:border-theme-500 transition-colors" onclick="openCertModal('https://placehold.co/800x600/3b82f6/ffffff?text=Quantum+Fundamentals')">
+                <div class="glass-card p-2 rounded-xl group cursor-pointer hover:border-theme-500 transition-colors" id="cert-4-card">
                     <div class="aspect-[4/3] bg-gray-100 dark:bg-surface-dark rounded-lg mb-2 overflow-hidden relative flex items-center justify-center border border-gray-200 dark:border-gray-800">
-                        <!-- UPLOAD CERT 4 HERE: Replace src -->
-                        <img src="https://placehold.co/400x300/3b82f6/ffffff?text=Quantum" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500 z-20">
+                        <img id="cert-4-img" src="" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500 z-20">
                         <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity z-30 flex items-center justify-center">
                             <i data-lucide="zoom-in" class="text-white w-8 h-8"></i>
                         </div>
@@ -1028,47 +1019,83 @@
             const colorHex = getComputedStyle(document.body).getPropertyValue('--theme-500').trim() || '#14b8a6';
             
             const material = new THREE.PointsMaterial({
-                size: 2, color: colorHex, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending
+                size: 2,
+                color: colorHex,
+                transparent: true,
+                opacity: 0.8
             });
 
             particles = new THREE.Points(geometry, material);
             scene.add(particles);
-
-            let mouseX = 0, mouseY = 0;
-            document.addEventListener('mousemove', (e) => {
-                mouseX = e.clientX; mouseY = e.clientY;
-            });
-
-            const animate = () => {
-                requestAnimationFrame(animate);
-                particles.rotation.y += 0.001;
-                particles.rotation.x += 0.0005;
-                camera.position.x += ((mouseX - window.innerWidth/2) * 0.05 - camera.position.x) * 0.02;
-                camera.position.y += (-(mouseY - window.innerHeight/2) * 0.05 - camera.position.y) * 0.02;
-                camera.lookAt(scene.position);
-                renderer.render(scene, camera);
-            };
-            animate();
 
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, window.innerHeight);
             });
+
+            animateThreeJS();
+        }
+
+        function animateThreeJS() {
+            requestAnimationFrame(animateThreeJS);
+            if(particles) {
+                particles.rotation.y += 0.001;
+                particles.rotation.x += 0.0005;
+            }
+            renderer.render(scene, camera);
         }
 
         function updateThreeJSColor() {
             if(particles) {
-                setTimeout(() => {
-                    let hex = getComputedStyle(document.body).getPropertyValue('--theme-500').trim();
-                    if(hex.startsWith('#')) particles.material.color.setHex(parseInt(hex.replace('#', '0x')));
-                }, 50);
+                const colorHex = getComputedStyle(document.body).getPropertyValue('--theme-500').trim() || '#14b8a6';
+                particles.material.color.set(colorHex);
             }
+        }
+
+        // Dynamic Certificate Generator
+        function initCertificates() {
+            const certs = [
+                { id: 'cert-1', title: 'NPTEL: E-Business', color: '#0d9488' },
+                { id: 'cert-2', title: 'NPTEL: Indian Knowledge System', color: '#0d9488' },
+                { id: 'cert-3', title: 'Generative AI Mastermind', color: '#9333ea' },
+                { id: 'cert-4', title: 'Quantum Fundamentals', color: '#3b82f6' }
+            ];
+
+            certs.forEach(cert => {
+                const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='800' height='600'>
+                    <rect width='100%' height='100%' fill='#f8fafc'/>
+                    <rect x='20' y='20' width='760' height='560' fill='none' stroke='${cert.color}' stroke-width='10'/>
+                    <rect x='30' y='30' width='740' height='540' fill='none' stroke='${cert.color}' stroke-width='2'/>
+                    <text x='400' y='140' font-family='Georgia, serif' font-size='36' font-weight='bold' fill='#0f172a' text-anchor='middle'>CERTIFICATE OF COMPLETION</text>
+                    <text x='400' y='220' font-family='Arial, sans-serif' font-size='18' fill='#64748b' text-anchor='middle'>This is to proudly certify that</text>
+                    <text x='400' y='300' font-family='Georgia, serif' font-size='42' font-weight='bold' font-style='italic' fill='${cert.color}' text-anchor='middle'>Ravi Shankar Kr Choudhary</text>
+                    <text x='400' y='380' font-family='Arial, sans-serif' font-size='18' fill='#64748b' text-anchor='middle'>has successfully completed the certification for</text>
+                    <text x='400' y='440' font-family='Arial, sans-serif' font-size='26' font-weight='bold' fill='#0f172a' text-anchor='middle'>${cert.title}</text>
+                    <circle cx='400' cy='520' r='35' fill='#fbbf24'/>
+                    <circle cx='400' cy='520' r='30' fill='none' stroke='#b45309' stroke-width='2' stroke-dasharray='4,4'/>
+                    <text x='400' y='525' font-family='Arial, sans-serif' font-size='12' font-weight='bold' fill='#b45309' text-anchor='middle'>VERIFIED</text>
+                    <line x1='150' y1='520' x2='300' y2='520' stroke='#0f172a' stroke-width='2'/>
+                    <text x='225' y='545' font-family='Arial, sans-serif' font-size='14' fill='#0f172a' text-anchor='middle'>Authorized Signature</text>
+                    <line x1='500' y1='520' x2='650' y2='520' stroke='#0f172a' stroke-width='2'/>
+                    <text x='575' y='545' font-family='Arial, sans-serif' font-size='14' fill='#0f172a' text-anchor='middle'>Date: 2024</text>
+                </svg>`;
+                const dataUri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+                
+                const imgEl = document.getElementById(cert.id + '-img');
+                const cardEl = document.getElementById(cert.id + '-card');
+                
+                if(imgEl) imgEl.src = dataUri;
+                
+                // FIXED: Direct event assignment instead of string interpolation
+                if(cardEl) cardEl.onclick = () => openCertModal(dataUri);
+            });
         }
 
         // On Load
         window.onload = () => {
             initThreeJS();
+            initCertificates();
             gsap.from("nav", { y: -100, opacity: 0, duration: 1, ease: "power3.out" });
         };
     </script>
